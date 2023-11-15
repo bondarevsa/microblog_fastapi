@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Sign In</h1>
+    {% if error %}
+        {{error}}
+    {% endif %}
+    {% if after_register %}
+        {{after_register}}
+    {% endif %}
+    <form method="post" action="/auth/login">
+        <p>
+            <label for="username">Username</label><br>
+            <input type="text" name="username" id="username" required>
+        </p>
+        <p>
+            <label for="password">Password</label><br>
+            <input type="password" name="password" id="password" required>
+        </p>
+        <p>
+            <input type="checkbox" name="remember_me" id="remember_me">
+            <label for="remember_me">Remember Me</label>
+        </p>
+        <p>
+            <input type="submit" value="Sign In">
+        </p>
+    </form>
+{% endblock %}
