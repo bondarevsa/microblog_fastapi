@@ -1,4 +1,6 @@
+import base64
 import json
+from io import BytesIO
 from typing import Annotated, Tuple, Type
 from fastapi_users import FastAPIUsers, schemas, exceptions
 import httpx
@@ -6,7 +8,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import app
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.templating import Jinja2Templates
 from fastapi import Form
 from app.models.models import user as users
@@ -24,6 +26,8 @@ from fastapi_users.authentication import AuthenticationBackend, Authenticator, S
 from fastapi_users.manager import BaseUserManager, UserManagerDependency
 from fastapi_users.openapi import OpenAPIResponseType
 from fastapi_users.router.common import ErrorCode, ErrorModel
+
+from app.utils import get_scaled_avatar
 
 templates = Jinja2Templates(directory="app/templates")
 
@@ -179,7 +183,6 @@ async def user(request: Request, username: str, user: User = Depends(current_use
     query = select(User).where(User.username == username)
     res = await session.execute(query)
     user = res.scalar_one_or_none()
-    print(res)
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
@@ -188,7 +191,19 @@ async def user(request: Request, username: str, user: User = Depends(current_use
         {'author': user, 'body': 'Test post #2'}
     ]
 
-    return templates.TemplateResponse("user.html", {"request": request, "user": user, "posts": posts})
+    avatar = get_scaled_avatar(user.username, (128, 128))
+    avatar_mini = get_scaled_avatar(user.username, (36, 36))
+
+    return templates.TemplateResponse("user.html", {"request": request, "user": user, "posts": posts,
+                                                    'avatar': avatar, 'avatar_mini': avatar_mini})
+
+
+@app.get("/show_image")
+async def show_image(request: Request):
+    # Замените путь на путь к вашему изображению
+    image_path = "C:\\Users\\oxxxysemyon\\PycharmProjects\\microblog\\avatars\\default.jpg"
+
+    return FileResponse(image_path, media_type="image/jpeg")
 
 
 @app.get('/register', response_class=HTMLResponse)

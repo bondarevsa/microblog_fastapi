@@ -1,6 +1,8 @@
 from datetime import datetime
-
-from sqlalchemy import MetaData, Integer, String, TIMESTAMP, Column, Table, Boolean
+from app.auth.database import Base
+from sqlalchemy.orm import relationship
+from app.auth.database import User
+from sqlalchemy import MetaData, Integer, String, TIMESTAMP, Column, Table, Boolean, DateTime, ForeignKey
 
 metadata = MetaData()
 
@@ -16,4 +18,6 @@ user = Table(
     Column("is_superuser", Boolean, default=False, nullable=False),
     Column("is_verified", Boolean, default=False, nullable=False),
 )
+
+
 
