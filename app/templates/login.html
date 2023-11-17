@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Sign In</h1>
+    <h1>Вход</h1>
     {% if error %}
         {{error}}
     {% endif %}
@@ -10,11 +10,11 @@
     {% endif %}
     <form method="post" action="/auth/login">
         <p>
-            <label for="username">Username</label><br>
+            <label for="username">Имя пользователя</label><br>
             <input type="text" name="username" id="username" required>
         </p>
         <p>
-            <label for="password">Password</label><br>
+            <label for="password">Пароль</label><br>
             <input type="password" name="password" id="password" required>
         </p>
         <p>
@@ -22,7 +22,7 @@
             <label for="remember_me">Remember Me</label>
         </p>
         <p>
-            <input type="submit" value="Sign In">
+            <input type="submit" value="Войти">
         </p>
     </form>
 {% endblock %}
