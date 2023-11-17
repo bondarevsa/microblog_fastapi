@@ -1,11 +1,4 @@
-
-from fastapi_users import fastapi_users, FastAPIUsers
-from pydantic import BaseModel, Field
-
-from fastapi import FastAPI, Request, status, Depends
-from fastapi.encoders import jsonable_encoder
-# from fastapi.exceptions import ValidationError
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.auth.auth import auth_backend
@@ -26,3 +19,5 @@ app.add_middleware(
 )
 
 from app import routes
+from app.auth import routes
+from app import middlewares

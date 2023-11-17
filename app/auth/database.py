@@ -6,7 +6,7 @@ from fastapi_users.db import SQLAlchemyBaseUserTable, SQLAlchemyUserDatabase
 from sqlalchemy import Column, String, Boolean, Integer, TIMESTAMP, ForeignKey
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, relationship
 
 from config import DB_HOST, DB_NAME, DB_PASS, DB_PORT, DB_USER
 
@@ -18,11 +18,24 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     id = Column(Integer, primary_key=True)
     email = Column(String, nullable=False)
     username = Column(String, nullable=False)
+    about_me = Column(String)
+    last_seen = Column(TIMESTAMP, default=datetime.utcnow)
     registered_at = Column(TIMESTAMP, default=datetime.utcnow)
     hashed_password: str = Column(String(length=1024), nullable=False)
     is_active: bool = Column(Boolean, default=True, nullable=False)
     is_superuser: bool = Column(Boolean, default=False, nullable=False)
     is_verified: bool = Column(Boolean, default=False, nullable=False)
+
+    post = relationship('Post')
+
+
+class Post(Base):
+    __tablename__ = "post"
+
+    id = Column(Integer, primary_key=True)
+    body = Column(String)
+    timestamp = Column(TIMESTAMP, default=datetime.utcnow)
+    user_id = Column(Integer, ForeignKey('user.id'))
 
 
 engine = create_async_engine(DATABASE_URL)

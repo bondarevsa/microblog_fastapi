@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Редактировать профиль</h1>
+    {% if after_edit %}
+        <span style="color: green">Изменения приняты</span>
+    {% endif %}
+<style>
+  textarea {
+    resize: none;
+  }
+</style>
+    <form action="/edit_profile" method="post">
+        <p>
+            <label for="username">Имя пользователя</label><br>
+            <input type="text" name="username" id="username" value="{{ user.username | safe }}" required>
+        </p>
+        <p>
+            <label for="about_me">Обо мне</label><br>
+            <textarea name="about_me" id="about_me" rows="5" cols="33" required>{% if user.about_me %}{{ user.about_me }}{% endif %}</textarea>
+        </p>
+        <p>
+            <input type="submit" value="Внести изменения">
+        </p>
+    </form>
+
+{% endblock %}
