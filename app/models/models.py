@@ -2,7 +2,7 @@ from datetime import datetime
 from app.auth.database import Base
 from sqlalchemy.orm import relationship
 from app.auth.database import User
-from sqlalchemy import MetaData, Integer, String, TIMESTAMP, Column, Table, Boolean, DateTime, ForeignKey
+from sqlalchemy import MetaData, Integer, String, TIMESTAMP, Column, Table, Boolean, DateTime, ForeignKey, ARRAY
 
 metadata = MetaData()
 
@@ -15,6 +15,7 @@ user = Table(
     Column("registered_at", TIMESTAMP, default=datetime.utcnow),
     Column("about_me", String),
     Column("last_seen", TIMESTAMP, default=datetime.utcnow),
+    Column("followers", ARRAY(Integer)),
     Column("hashed_password", String, nullable=False),
     Column("is_active", Boolean, default=True, nullable=False),
     Column("is_superuser", Boolean, default=False, nullable=False),

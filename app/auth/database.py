@@ -3,7 +3,7 @@ from typing import AsyncGenerator
 
 from fastapi import Depends
 from fastapi_users.db import SQLAlchemyBaseUserTable, SQLAlchemyUserDatabase
-from sqlalchemy import Column, String, Boolean, Integer, TIMESTAMP, ForeignKey
+from sqlalchemy import Column, String, Boolean, Integer, TIMESTAMP, ForeignKey, ARRAY
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
@@ -20,6 +20,7 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     username = Column(String, nullable=False)
     about_me = Column(String)
     last_seen = Column(TIMESTAMP, default=datetime.utcnow)
+    followers = Column(ARRAY(Integer))
     registered_at = Column(TIMESTAMP, default=datetime.utcnow)
     hashed_password: str = Column(String(length=1024), nullable=False)
     is_active: bool = Column(Boolean, default=True, nullable=False)

@@ -4,11 +4,11 @@ from io import BytesIO
 from typing import Annotated, Tuple, Type
 from fastapi_users import FastAPIUsers, schemas, exceptions
 import httpx
-from sqlalchemy import select, update
+from sqlalchemy import select, update, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import app
-from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi import Form
 from app.models.models import user as users
@@ -49,10 +49,15 @@ def index(request: Request):
             'body': 'Какая гадость эта ваша заливная рыба!!'
         }
     ]
-    return templates.TemplateResponse('index.html', {'request': request,
-                                                                    'title': 'Home',
-                                                                    'user': user,
-                                                                    'posts': posts})
+    return templates.TemplateResponse(
+        'index.html',
+        {
+            'request': request,
+            'title': 'Home',
+            'user': user,
+            'posts': posts
+        }
+    )
 
 
 @app.get('/user/{username}')
@@ -114,6 +119,30 @@ async def get_edit_profile(
     return templates.TemplateResponse('edit_profile.html', {'request': request, 'user': user, 'after_edit': True})
 
 
-@app.get("/protected-route")
-def protected_route(user: User = Depends(current_user)):
-    return f"Hello, {user.email}"
+@app.post('/follow')
+async def follow(
+        request: Request,
+        username: str = Form(...),
+        current_user: User = Depends(current_user),
+        session: AsyncSession = Depends(get_async_session)
+):
+    stmt = update(User).values(followers=func.array_append(User.followers, current_user.id)).where(User.username == username)
+    await session.execute(stmt)
+    await session.commit()
+
+    return RedirectResponse(f'/user/{username}', status_code=303)
+
+
+@app.post('/unfollow')
+async def follow(
+        request: Request,
+        username: str = Form(...),
+        current_user: User = Depends(current_user),
+        session: AsyncSession = Depends(get_async_session)
+):
+    stmt = update(User).values(followers=func.array_remove(User.followers, current_user.id)).where(User.username == username)
+    await session.execute(stmt)
+    await session.commit()
+
+    return RedirectResponse(f'/user/{username}', status_code=303)
+
