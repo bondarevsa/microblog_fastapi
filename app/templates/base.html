@@ -9,9 +9,10 @@
     <body>
         <div>
             Microblog:
-            <a href="/index">Главная</a>
+            <a href="/index/all">Главная</a>
             <a href="/login">Вход</a>
             <a href="/register">Регистрация</a>
+            <a href="/create_post">Создать пост</a>
             <a href="/auth/logout">Выйти</a>
             {% if current_user %}
                 <a href="{{ url_for('user', username=current_user.username) }}">Ваш профиль</a>

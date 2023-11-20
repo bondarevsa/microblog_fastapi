@@ -1,64 +1,52 @@
 import asyncio
-import base64
-import json
-from io import BytesIO
-from typing import Annotated, Tuple, Type
-from fastapi_users import FastAPIUsers, schemas, exceptions
-import httpx
 from sqlalchemy import select, update, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import app
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
-from fastapi import Form
+from fastapi import Form, UploadFile, File
 
-from app.accessor import get_user_by_username, get_user_by_id, accessor_follow, accessor_unfollow
-from app.models.models import user as users
+from app.accessor import get_user_by_username, get_user_by_id, accessor_follow, accessor_unfollow, accessor_create_post, \
+    get_post_by_id, get_all_posts, get_following_posts
 
-from app.auth.auth import auth_backend
-from app.auth.database import User, get_async_session
-from app.auth.manager import get_user_manager
-from app.auth.schemas import UserRead, UserCreate, UserUpdate
+from app.auth.database import User, get_async_session, Post
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status, Response
-from fastapi.security import OAuth2PasswordRequestForm
-
-from fastapi_users import models
-from fastapi_users.authentication import AuthenticationBackend, Authenticator, Strategy
-from fastapi_users.manager import BaseUserManager, UserManagerDependency
-from fastapi_users.openapi import OpenAPIResponseType
-from fastapi_users.router.common import ErrorCode, ErrorModel
+from fastapi import APIRouter, Depends, HTTPException, Request
 from app.auth.routes import fastapi_users, current_user
 from app.utils import get_scaled_avatar
 
 templates = Jinja2Templates(directory="app/templates")
 
 
-@app.get('/index', response_class=HTMLResponse)
-def index(request: Request):
-    user = {'username': 'pudge'}
-    posts = [
-        {
-            'author': {'username': 'John'},
-            'body': 'Beautiful day in Portland!'
-        },
-        {
-            'author': {'username': 'Susan'},
-            'body': 'The Avengers movie was so cool!'
-        },
-        {
-            'author': {'username': 'Ипполит'},
-            'body': 'Какая гадость эта ваша заливная рыба!!'
-        }
-    ]
+@app.get('/index/{status}', response_class=HTMLResponse)
+async def index(
+        status: str,
+        request: Request,
+        current_user: User = Depends(current_user),
+        session: AsyncSession = Depends(get_async_session)
+):
+    if status == 'all':
+        posts = await get_all_posts(session)
+
+    elif status == 'following':
+        if current_user.following:
+            posts = await get_following_posts(current_user, session)
+        else:
+            posts = []
+
+    posts_with_avatars = []
+    for post in posts:
+        posts_with_avatars.append((get_scaled_avatar(post[0].id, (120, 80), path='C:\\Users\\oxxxysemyon\\PycharmProjects\\microblog\\avatars\\posts'), post[0]))
+
     return templates.TemplateResponse(
         'index.html',
         {
             'request': request,
             'title': 'Home',
             'user': user,
-            'posts': posts
+            'posts': posts,
+            'posts_with_avatars': posts_with_avatars
         }
     )
 
@@ -221,4 +209,37 @@ async def list_of_following(
             'followers_with_avatars': following_with_avatars
         }
     )
+
+
+@app.get('/create_post')
+async def create_post(
+        request: Request,
+        current_user: User = Depends(current_user),
+        session: AsyncSession = Depends(get_async_session)
+):
+    return templates.TemplateResponse(
+        'create_post.html',
+        {'request': request
+         }
+    )
+
+
+@app.post('/create_post')
+async def create_post(
+        request: Request,
+        header: str = Form(...),
+        body: str = Form(...),
+        image: UploadFile = File(..., content_type="image/jpeg"),
+        current_user: User = Depends(current_user),
+        session: AsyncSession = Depends(get_async_session)
+):
+    post = await accessor_create_post(header, body, image, current_user, session)
+    return RedirectResponse(f'/posts/{post.id}', status_code=303)
+
+
+@app.get('/posts/{post_id}')
+async def post(post_id: int, request: Request, current_user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)):
+    post = await get_post_by_id(post_id, session)
+    image = get_scaled_avatar(post_id, (600, 400), path='C:\\Users\\oxxxysemyon\\PycharmProjects\\microblog\\avatars\\posts')
+    return templates.TemplateResponse('post.html', {'request': request, 'post': post, 'current_user': current_user, 'image': image})
 

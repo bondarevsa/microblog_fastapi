@@ -1,10 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block content %}
+    <form action="/create_post" method="post" enctype="multipart/form-data">
+        <label for="header">Название поста</label><br>
+        <input type="text" name="header" id="header"  required>
+
+        <br><label for="body">Содержание поста</label><br>
+        <textarea name="body" id="body"  rows="5" cols="33" required></textarea><br>
+
+        <label for="image">Загрузить обложку поста:</label><br>
+        <input type="file" id="image" name="image" accept="image/*" required>
+        <br>
+        <input type="submit" value="Создать пост">
+    </form>
+{% endblock %}

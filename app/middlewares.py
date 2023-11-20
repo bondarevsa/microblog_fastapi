@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from fastapi.templating import Jinja2Templates
-
+from fastapi.responses import RedirectResponse
 import config
 import jwt
 from sqlalchemy import update
@@ -33,7 +33,7 @@ async def not_found_error(request, exc: HTTPException):
     if exc.status_code == 404:
         return templates.TemplateResponse('/errors/404.html', {"request": request}, status_code=404)
     if exc.status_code == 401:
-        return templates.TemplateResponse('/errors/401.html', {"request": request}, status_code=401)
+        return RedirectResponse('/login', status_code=303)
     print(exc.detail)
     return templates.TemplateResponse('/errors/500.html', {"request": request}, status_code=500)
 

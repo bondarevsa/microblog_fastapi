@@ -20,8 +20,8 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     username = Column(String, nullable=False)
     about_me = Column(String)
     last_seen = Column(TIMESTAMP, default=datetime.utcnow)
-    followers = Column(ARRAY(Integer))
-    following = Column(ARRAY(Integer))
+    followers = Column(ARRAY(Integer), default=[])
+    following = Column(ARRAY(Integer), default=[])
     registered_at = Column(TIMESTAMP, default=datetime.utcnow)
     hashed_password: str = Column(String(length=1024), nullable=False)
     is_active: bool = Column(Boolean, default=True, nullable=False)
@@ -36,6 +36,7 @@ class Post(Base):
 
     id = Column(Integer, primary_key=True)
     body = Column(String)
+    header = Column(String)
     timestamp = Column(TIMESTAMP, default=datetime.utcnow)
     user_id = Column(Integer, ForeignKey('user.id'))
 

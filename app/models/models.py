@@ -15,8 +15,8 @@ user = Table(
     Column("registered_at", TIMESTAMP, default=datetime.utcnow),
     Column("about_me", String),
     Column("last_seen", TIMESTAMP, default=datetime.utcnow),
-    Column("followers", ARRAY(Integer)),
-    Column("following", ARRAY(Integer)),
+    Column("followers", ARRAY(Integer), default=[]),
+    Column("following", ARRAY(Integer), default=[]),
     Column("hashed_password", String, nullable=False),
     Column("is_active", Boolean, default=True, nullable=False),
     Column("is_superuser", Boolean, default=False, nullable=False),
@@ -28,6 +28,7 @@ post = Table(
     metadata,
     Column("id", Integer, primary_key=True),
     Column("body", String),
+    Column("header", String),
     Column("timestamp", TIMESTAMP, default=datetime.utcnow),
     Column("user_id", Integer, ForeignKey("user.id"))
 )
