@@ -1,3 +1,4 @@
+import asyncio
 import base64
 import json
 from io import BytesIO
@@ -11,6 +12,8 @@ from app import app
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi import Form
+
+from app.accessor import get_user_by_username, get_user_by_id, accessor_follow, accessor_unfollow
 from app.models.models import user as users
 
 from app.auth.auth import auth_backend
@@ -116,7 +119,15 @@ async def get_edit_profile(
     stmt = update(User).where(User.id == user.id).values(username=username, about_me=about_me)
     await session.execute(stmt)
     await session.commit()
-    return templates.TemplateResponse('edit_profile.html', {'request': request, 'user': user, 'after_edit': True})
+
+    return templates.TemplateResponse(
+        'edit_profile.html',
+        {
+            'request': request,
+            'user': user,
+            'after_edit': True
+        }
+    )
 
 
 @app.post('/follow')
@@ -126,9 +137,7 @@ async def follow(
         current_user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ):
-    stmt = update(User).values(followers=func.array_append(User.followers, current_user.id)).where(User.username == username)
-    await session.execute(stmt)
-    await session.commit()
+    await accessor_follow(current_user.id, username, session)
 
     return RedirectResponse(f'/user/{username}', status_code=303)
 
@@ -140,9 +149,76 @@ async def follow(
         current_user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ):
-    stmt = update(User).values(followers=func.array_remove(User.followers, current_user.id)).where(User.username == username)
-    await session.execute(stmt)
-    await session.commit()
+    await accessor_unfollow(current_user.id, username, session)
 
     return RedirectResponse(f'/user/{username}', status_code=303)
+
+
+@app.get('/user/{username}/followers')
+async def list_of_followers(
+        request: Request,
+        username: str,
+        current_user: User = Depends(current_user),
+        session: AsyncSession = Depends(get_async_session)
+):
+    user = await get_user_by_username(username, session)
+    if not user.followers:
+        return templates.TemplateResponse(
+            'list_of_users.html',
+            {
+                'request': request
+            }
+        )
+    tasks = []
+    for follower_id in user.followers:
+        task = get_user_by_id(follower_id, session)
+        tasks.append(task)
+    user_followers = await asyncio.gather(*tasks)
+
+    followers_with_avatars = []
+    for follower in user_followers:
+        followers_with_avatars.append((get_scaled_avatar(follower.username, (36, 36)), follower))
+
+    return templates.TemplateResponse(
+        'list_of_users.html',
+        {
+            'request': request,
+            'followers_with_avatars': followers_with_avatars
+        }
+    )
+
+
+@app.get('/user/{username}/following')
+async def list_of_following(
+        request: Request,
+        username: str,
+        current_user: User = Depends(current_user),
+        session: AsyncSession = Depends(get_async_session)
+):
+    user = await get_user_by_username(username, session)
+    tasks = []
+    if not user.following:
+        return templates.TemplateResponse(
+            'list_of_users.html',
+            {
+                'request': request,
+                'list_of_following': True
+            }
+        )
+    for following_id in user.following:
+        task = get_user_by_id(following_id, session)
+        tasks.append(task)
+    user_following = await asyncio.gather(*tasks)
+
+    following_with_avatars = []
+    for following in user_following:
+        following_with_avatars.append((get_scaled_avatar(following.username, (36, 36)), following))
+
+    return templates.TemplateResponse(
+        'list_of_users.html',
+        {
+            'request': request,
+            'followers_with_avatars': following_with_avatars
+        }
+    )
 

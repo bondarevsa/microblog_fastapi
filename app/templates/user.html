@@ -22,6 +22,13 @@
                 </form>
                 {% endif %}
 
+                <form method="get" action="/user/{{ user.username }}/followers">
+                    <input type="submit" value="Подписчики" style="background-color: aqua;">
+                </form>
+                <form method="get" action="/user/{{ user.username }}/following">
+                    <input type="submit" value="Подписки" style="background-color: aqua;">
+                </form>
+
             </td>
         </tr>
     </table>

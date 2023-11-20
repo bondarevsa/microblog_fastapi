@@ -31,14 +31,14 @@ async def set_last_seen_time(request: Request, call_next):
 @app.exception_handler(HTTPException)
 async def not_found_error(request, exc: HTTPException):
     if exc.status_code == 404:
-        return templates.TemplateResponse('404.html', {"request": request}, status_code=404)
+        return templates.TemplateResponse('/errors/404.html', {"request": request}, status_code=404)
     if exc.status_code == 401:
-        return templates.TemplateResponse('401.html', {"request": request}, status_code=401)
+        return templates.TemplateResponse('/errors/401.html', {"request": request}, status_code=401)
     print(exc.detail)
-    return templates.TemplateResponse('500.html', {"request": request}, status_code=500)
+    return templates.TemplateResponse('/errors/500.html', {"request": request}, status_code=500)
 
 
 @app.exception_handler(Exception)
 async def handle_generic_exception(request: Request, exc: Exception):
     print(exc)
-    return templates.TemplateResponse('500.html', {"request": request}, status_code=500)
+    return templates.TemplateResponse('/errors/500.html', {"request": request}, status_code=500)

@@ -21,6 +21,7 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     about_me = Column(String)
     last_seen = Column(TIMESTAMP, default=datetime.utcnow)
     followers = Column(ARRAY(Integer))
+    following = Column(ARRAY(Integer))
     registered_at = Column(TIMESTAMP, default=datetime.utcnow)
     hashed_password: str = Column(String(length=1024), nullable=False)
     is_active: bool = Column(Boolean, default=True, nullable=False)

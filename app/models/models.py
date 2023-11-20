@@ -16,6 +16,7 @@ user = Table(
     Column("about_me", String),
     Column("last_seen", TIMESTAMP, default=datetime.utcnow),
     Column("followers", ARRAY(Integer)),
+    Column("following", ARRAY(Integer)),
     Column("hashed_password", String, nullable=False),
     Column("is_active", Boolean, default=True, nullable=False),
     Column("is_superuser", Boolean, default=False, nullable=False),

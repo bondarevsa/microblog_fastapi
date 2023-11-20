@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+    {% if not followers_with_avatars %}
+        {% if list_of_following %}
+            Пользователь ни на кого не подписан
+        {% else %}
+            На пользователя никто не подписан :(
+        {% endif %}
+    {% endif %}
+
+    {% for follower in followers_with_avatars %}
+        {% include '_user_for_list_of_users.html' %}
+    {% endfor %}
+{% endblock %}
