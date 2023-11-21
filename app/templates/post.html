@@ -1,33 +1,30 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row" align="center">
-  <div class="col-sm-1 col-md-3" >
-    <div class="thumbnail" style="background-color: rgb(228, 228, 228);">
-        <img src="data:image/jpeg;base64,{{ image }}">
-        <div class="caption">
-          <h3>{{post.header}}</h3>
-          <p>{{post.body}}</p>
-          <p align="center"> <font size="2" color=#808080 face="serif">
-              <a href="/user/{{post.author.username}}">Автор: {{post.author.username}}</a><br>
-            Дата: {{post.timestamp}}
-          </font></p>
+    <div style="max-width: 800px; margin: auto; margin-top: 50px;">
+        <div style="background-color: #e4e4e4; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);" align="center">
+            <h1>{{ post.header }}</h1>
+            <img src="data:image/jpeg;base64,{{ image }}" alt="Post Image" style="max-width: 100%; border-radius: 8px;">
+            <p>{{ post.body }}</p>
+            <p style="color: #808080; font-size: 12px;">
+                <a href="/user/{{ post.author.username }}" style="color: #808080;">Автор: {{ post.author.username }}</a><br>
+                Дата: {{ post.timestamp }}
+            </p>
         </div>
     </div>
-  </div>
-</div>
 
-<div align="center">
-    <h2 align="center">Комментарии</h2>
-    <form method="post" action="/posts/add_comment/{{ post.id }}">
-        <textarea name="text" id="text" rows="3" cols="60" placeholder="Оставьте свой комментарий" required></textarea><br>
-        <input type="submit" value="Отправить комментарий" align="left">
-    </form>
-</div>
-<div align="center">
-    {% for comment in comments_and_avatars %}
-        {% include '_comment.html' %}
-        <br>
-    {% endfor %}
-</div>
+    <div style="max-width: 800px; margin: auto; margin-top: 30px;">
+        <h2 style="text-align: center;">Комментарии</h2>
+        <form method="post" action="/posts/add_comment/{{ post.id }}" style="text-align: center;">
+            <textarea name="text" id="text" rows="3" cols="60" placeholder="Оставьте свой комментарий" style="width: 100%; padding: 10px; box-sizing: border-box;" required></textarea><br>
+            <input type="submit" value="Отправить комментарий" style="background-color: #4CAF50; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer;">
+        </form>
+    </div>
+
+    <div style="max-width: 800px; margin: auto; margin-top: 20px;">
+        {% for comment in comments_and_avatars %}
+            {% include '_comment.html' %}
+            <hr style="border-color: #e4e4e4;">
+        {% endfor %}
+    </div>
 {% endblock %}

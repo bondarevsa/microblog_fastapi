@@ -1,7 +1,13 @@
-<table style="background-color: rgb(228, 228, 228)">
-
-    <tr valign="top">
-        <td><a href="/user/{{comment[1].author.username}}"><img src="data:image/jpeg;base64,{{ comment[0] }}" alt="User Avatar"></a></td>
-        <td><a href="/user/{{comment[1].author.username}}">{{ comment[1].author.username }}:</a><br>{{ comment[1].text }}</td>
-    </tr>
-</table>
+<div class="comment-container">
+        <div class="comment">
+            <a href="/user/{{ comment[1].author.username }}">
+                <img src="data:image/jpeg;base64,{{ comment[0] }}" alt="User Avatar" class="comment-avatar">
+            </a>
+            <div class="comment-content">
+                <a href="/user/{{ comment[1].author.username }}" class="comment-username">
+                    {{ comment[1].author.username }}:
+                </a>
+                <p>{{ comment[1].text }}</p>
+            </div>
+        </div>
+    </div>

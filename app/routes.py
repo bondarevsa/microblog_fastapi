@@ -38,14 +38,14 @@ async def index(
 
     posts_with_avatars = []
     for post in posts:
-        posts_with_avatars.append((get_scaled_avatar(post[0].id, (120, 80), path='C:\\Users\\oxxxysemyon\\PycharmProjects\\microblog\\avatars\\posts'), post[0]))
+        posts_with_avatars.append((get_scaled_avatar(post[0].id, (360, 240), path='C:\\Users\\oxxxysemyon\\PycharmProjects\\microblog\\avatars\\posts'), post[0]))
 
     return templates.TemplateResponse(
         'index.html',
         {
             'request': request,
             'title': 'Home',
-            'user': user,
+            'current_user': current_user,
             'posts': posts,
             'posts_with_avatars': posts_with_avatars
         }
@@ -84,12 +84,12 @@ async def user(
 
 
 @app.get('/edit_profile')
-async def get_edit_profile(request: Request, user: User = Depends(current_user)):
+async def get_edit_profile(request: Request, current_user: User = Depends(current_user)):
     return templates.TemplateResponse(
         'edit_profile.html',
         {
             'request': request,
-            'user': user
+            'current_user': current_user
         }
     )
 
@@ -99,10 +99,10 @@ async def get_edit_profile(
     request: Request,
     username: str = Form(...),
     about_me: str = Form(...),
-    user: User = Depends(current_user),
+    current_user: User = Depends(current_user),
     session: AsyncSession = Depends(get_async_session)
 ):
-    stmt = update(User).where(User.id == user.id).values(username=username, about_me=about_me)
+    stmt = update(User).where(User.id == current_user.id).values(username=username, about_me=about_me)
     await session.execute(stmt)
     await session.commit()
 
@@ -110,7 +110,7 @@ async def get_edit_profile(
         'edit_profile.html',
         {
             'request': request,
-            'user': user,
+            'current_user': current_user,
             'after_edit': True
         }
     )
