@@ -28,7 +28,7 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     is_superuser: bool = Column(Boolean, default=False, nullable=False)
     is_verified: bool = Column(Boolean, default=False, nullable=False)
 
-    post = relationship('Post')
+    posts = relationship("Post", back_populates="author")
 
 
 class Post(Base):
@@ -40,6 +40,20 @@ class Post(Base):
     timestamp = Column(TIMESTAMP, default=datetime.utcnow)
     user_id = Column(Integer, ForeignKey('user.id'))
 
+    comment = relationship('Comment')
+    author = relationship("User", back_populates="posts", lazy='joined')
+
+
+class Comment(Base):
+    __tablename__ = "comment"
+
+    id = Column(Integer, primary_key=True)
+    text = Column(String)
+    created_at = Column(TIMESTAMP, default=datetime.utcnow)
+    user_id = Column(Integer, ForeignKey("user.id"))
+    post_id = Column(Integer, ForeignKey("post.id"))
+
+    author = relationship("User", lazy='joined')
 
 engine = create_async_engine(DATABASE_URL)
 async_session_maker = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)

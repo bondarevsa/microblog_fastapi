@@ -33,5 +33,12 @@ post = Table(
     Column("user_id", Integer, ForeignKey("user.id"))
 )
 
-
-
+comment = Table(
+    "comment",
+    metadata,
+    Column("id", Integer, primary_key=True),
+    Column("text", String),
+    Column("created_at", TIMESTAMP, default=datetime.utcnow),
+    Column("user_id", Integer, ForeignKey("user.id")),
+    Column("post_id", Integer, ForeignKey("post.id"))
+)

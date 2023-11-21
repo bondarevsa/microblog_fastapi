@@ -8,7 +8,8 @@ from fastapi.templating import Jinja2Templates
 from fastapi import Form, UploadFile, File
 
 from app.accessor import get_user_by_username, get_user_by_id, accessor_follow, accessor_unfollow, accessor_create_post, \
-    get_post_by_id, get_all_posts, get_following_posts
+    get_post_by_id, get_all_posts, get_following_posts, accessor_add_comment, get_post_comments, \
+    get_user_posts_by_username
 
 from app.auth.database import User, get_async_session, Post
 
@@ -64,10 +65,7 @@ async def user(
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
-    posts = [
-        {'author': user, 'body': 'Test post #1'},
-        {'author': user, 'body': 'Test post #2'}
-    ]
+    posts = await get_user_posts_by_username(username, session)
 
     avatar = get_scaled_avatar(user.username, (128, 128))
     avatar_mini = get_scaled_avatar(user.username, (36, 36))
@@ -238,8 +236,38 @@ async def create_post(
 
 
 @app.get('/posts/{post_id}')
-async def post(post_id: int, request: Request, current_user: User = Depends(current_user), session: AsyncSession = Depends(get_async_session)):
+async def post(
+        post_id: int,
+        request: Request,
+        current_user: User = Depends(current_user),
+        session: AsyncSession = Depends(get_async_session)
+):
     post = await get_post_by_id(post_id, session)
     image = get_scaled_avatar(post_id, (600, 400), path='C:\\Users\\oxxxysemyon\\PycharmProjects\\microblog\\avatars\\posts')
-    return templates.TemplateResponse('post.html', {'request': request, 'post': post, 'current_user': current_user, 'image': image})
+
+    comments = await get_post_comments(post_id, session)
+    comments_and_avatars = []
+    for comment in comments:
+        comments_and_avatars.append((get_scaled_avatar(comment.author.username, size=(36, 36)), comment))
+    return templates.TemplateResponse(
+        'post.html',
+        {
+            'request': request,
+            'post': post,
+            'current_user': current_user,
+            'image': image,
+            'comments_and_avatars': comments_and_avatars
+        }
+    )
+
+
+@app.post('/posts/add_comment/{post_id}')
+async def add_comment(
+        post_id: int,
+        text: str = Form(...),
+        current_user: User = Depends(current_user),
+        session: AsyncSession = Depends(get_async_session)
+):
+    await accessor_add_comment(text, post_id, current_user, session)
+    return RedirectResponse(f'/posts/{post_id}', status_code=303)
 

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row", align="center">
+<div class="row" align="center">
   <div class="col-sm-1 col-md-3" >
     <div class="thumbnail" style="background-color: rgb(228, 228, 228);">
         <img src="data:image/jpeg;base64,{{ image }}">
@@ -9,11 +9,25 @@
           <h3>{{post.header}}</h3>
           <p>{{post.body}}</p>
           <p align="center"> <font size="2" color=#808080 face="serif">
-            Автор: {{current_user.username}}<br>
+              <a href="/user/{{post.author.username}}">Автор: {{post.author.username}}</a><br>
             Дата: {{post.timestamp}}
           </font></p>
         </div>
     </div>
   </div>
+</div>
+
+<div align="center">
+    <h2 align="center">Комментарии</h2>
+    <form method="post" action="/posts/add_comment/{{ post.id }}">
+        <textarea name="text" id="text" rows="3" cols="60" placeholder="Оставьте свой комментарий" required></textarea><br>
+        <input type="submit" value="Отправить комментарий" align="left">
+    </form>
+</div>
+<div align="center">
+    {% for comment in comments_and_avatars %}
+        {% include '_comment.html' %}
+        <br>
+    {% endfor %}
 </div>
 {% endblock %}
