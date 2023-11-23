@@ -1,10 +1,9 @@
 from typing import Optional
 
-from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.templating import Jinja2Templates
 from fastapi import Depends, Request, Response
 from fastapi_users import BaseUserManager, IntegerIDMixin, exceptions, models, schemas
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import RedirectResponse
 from app.auth.database import User, get_user_db
 
 SECRET = "SECRET"

@@ -2,16 +2,12 @@ from datetime import datetime
 
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
-import config
-import jwt
 from sqlalchemy import update
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import app
-from fastapi import Request, Depends, HTTPException
+from fastapi import Request, HTTPException
 
 from app.auth.database import get_async_session, User
-from app.auth.routes import fastapi_users, current_user
 from app.utils import get_user_id_by_jwt
 
 templates = Jinja2Templates(directory="app/templates")

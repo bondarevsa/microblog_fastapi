@@ -1,20 +1,17 @@
 import asyncio
-from sqlalchemy import select, update, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import app
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
-from fastapi import Form, UploadFile, File
+from fastapi import Form, UploadFile, File, Depends, HTTPException, Request
 
 from app.accessor import get_user_by_username, get_user_by_id, accessor_follow, accessor_unfollow, accessor_create_post, \
     get_post_by_id, get_all_posts, get_following_posts, accessor_add_comment, get_post_comments, \
-    get_user_posts_by_username
+    get_user_posts_by_username, update_profile
 
-from app.auth.database import User, get_async_session, Post
-
-from fastapi import APIRouter, Depends, HTTPException, Request
-from app.auth.routes import fastapi_users, current_user
+from app.auth.database import User, get_async_session
+from app.auth.routes import current_user
 from app.utils import get_scaled_avatar
 
 templates = Jinja2Templates(directory="app/templates")
@@ -59,9 +56,7 @@ async def user(
         current_user: User = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ):
-    query = select(User).where(User.username == username)
-    res = await session.execute(query)
-    user = res.scalar_one_or_none()
+    user = await get_user_by_username(username, session)
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
@@ -96,15 +91,13 @@ async def get_edit_profile(request: Request, current_user: User = Depends(curren
 
 @app.post('/edit_profile')
 async def get_edit_profile(
-    request: Request,
-    username: str = Form(...),
-    about_me: str = Form(...),
-    current_user: User = Depends(current_user),
-    session: AsyncSession = Depends(get_async_session)
+        request: Request,
+        username: str = Form(...),
+        about_me: str = Form(...),
+        current_user: User = Depends(current_user),
+        session: AsyncSession = Depends(get_async_session)
 ):
-    stmt = update(User).where(User.id == current_user.id).values(username=username, about_me=about_me)
-    await session.execute(stmt)
-    await session.commit()
+    await update_profile(current_user.id, username, about_me, session)
 
     return templates.TemplateResponse(
         'edit_profile.html',

@@ -94,3 +94,9 @@ async def get_post_comments(post_id: int, session: AsyncSession):
     res = await session.execute(query)
     comments = [item[0] for item in res.all()]
     return comments
+
+
+async def update_profile(user_id: int, username: str, about_me: str, session: AsyncSession):
+    stmt = update(User).where(User.id == user_id).values(username=username, about_me=about_me)
+    await session.execute(stmt)
+    await session.commit()
