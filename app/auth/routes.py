@@ -2,7 +2,7 @@ from typing import Annotated
 from fastapi_users import FastAPIUsers
 
 from app import app
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi import Form
 
@@ -103,7 +103,7 @@ def get_auth_router(
                 detail=ErrorCode.LOGIN_USER_NOT_VERIFIED,
             )
         token = await strategy.write_token(user)
-        response = templates.TemplateResponse('profile.html', {'request': request})
+        response = RedirectResponse('/index/all', status_code=303)
         response.set_cookie(key='auth_cookie', value=token, max_age=3600, secure=True, httponly=True)
 
         return response

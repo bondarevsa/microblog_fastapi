@@ -8,8 +8,8 @@ import os
 import jwt
 
 
-def get_scaled_avatar(username, size=(100, 100)):
-    avatar_path = os.path.join('C:\\Users\\oxxxysemyon\\PycharmProjects\\microblog\\avatars', f"{username}.jpg")
+def get_scaled_avatar(username_or_post_id, size=(100, 100), path='C:\\Users\\oxxxysemyon\\PycharmProjects\\microblog\\avatars'):
+    avatar_path = os.path.join(path, f"{username_or_post_id}.jpg")
 
     if not os.path.exists(avatar_path):
         avatar_path = os.path.join('C:\\Users\\oxxxysemyon\\PycharmProjects\\microblog\\avatars', f"default.jpg")

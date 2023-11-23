@@ -1,8 +1,38 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Hi, {{ user.username }}!</h1>
-    {% for post in posts %}
-    <div><p>{{ post.author.username }} says: <b>{{ post.body }}</b></p></div>
+<nav>
+  <div align="center">
+    <h2><a href="/index/all">Все посты</a> | <a href="/index/following">Подписки</a></h2>
+  </div>
+</nav>
+<navv>
+  <div>
+    {% if not posts_with_avatars %}
+      <div align="center">
+        <p>Вы ни на кого не подписаны.</p>
+      </div>
+    {% endif %}
+
+    {% for post in posts_with_avatars %}
+      <div align="center">
+        <div  style="background-color: white; padding: 10px; margin-bottom: 20px;">
+          <a href="/posts/{{ post[1].id }}">
+            <h1>{{ post[1].header }}</h1>
+            <img src="data:image/jpeg;base64,{{ post[0] }}" alt="{{ post[1].header }}">
+            <div>
+              <p>{{ post[1].body }}</p>
+              <p>
+                <small>
+                  Автор: {{ post[1].author.username }}<br>
+                  Дата: {{ post[1].timestamp }}
+                </small>
+              </p>
+            </div>
+          </a>
+        </div>
+      </div>
     {% endfor %}
+  </div>
+  </navv>
 {% endblock %}

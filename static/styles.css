@@ -1,0 +1,300 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+}
+
+header {
+    background-color: #343a40;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    font-size: 18px;
+}
+
+nav {
+    background-color: #e9ecef;
+    padding: 10px;
+    text-align: center;
+    font-size: 16px;
+}
+
+nav a {
+    margin: 0 10px;
+    color: #007bff;
+    text-decoration: none;
+}
+
+navv {
+
+    padding: 10px;
+    text-align: center;
+    font-size: 16px;
+}
+
+navv a {
+    margin: 0 10px;
+    color: black;
+    text-decoration: none;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+hr {
+    border: 1px solid #dee2e6;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.container {
+    margin: 20px;
+}
+
+.post-form-container {
+    max-width: 400px;
+    margin: auto;
+    padding: 20px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-bottom: 5px;
+}
+
+textarea {
+    resize: vertical;
+}
+
+.submit-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.profile-container {
+    max-width: 800px;
+    margin: auto;
+    margin-top: 50px;
+}
+
+.avatar-img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    margin-right: 20px;
+}
+
+.user-info {
+    vertical-align: top;
+}
+
+.edit-profile-link {
+    color: #3366cc;
+    text-decoration: none;
+}
+
+.follow-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+}
+
+.followers-button,
+.following-button {
+    flex-grow: 1;
+    background-color: #3366cc; /* Новый цвет кнопок */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.unfollow {
+    background-color: red;
+}
+
+.follow {
+    background-color: green;
+}
+
+.post-container {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #e4e4e4;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-header {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.post-body {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.post-info {
+    font-size: 12px;
+    color: #808080;
+}
+
+hr {
+    border-color: #e4e4e4;
+}
+
+        .user-list-container {
+    max-width: 400px;
+    margin: auto;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.user-list-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.user-username {
+    font-size: 16px;
+    font-weight: bold;
+}
+        .login-container {
+    max-width: 400px;
+    margin: auto;
+    margin-top: 50px;
+    padding: 20px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-bottom: 5px;
+    display: block;
+}
+
+input {
+    padding: 10px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+}
+
+.login-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.error-message {
+    color: red;
+}
+
+.success-message {
+    color: green;
+}
+        .comment-container {
+    margin-top: 20px;
+}
+
+.comment-table {
+    width: 100%;
+    background-color: rgb(228, 228, 228);
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.comment-row {
+    border-bottom: 1px solid #e4e4e4;
+}
+
+.comment-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.comment-username {
+    font-weight: bold;
+    text-decoration: none;
+    color: #3366cc;
+}
+        .post-container {
+    margin-top: 20px;
+}
+
+.post {
+    display: flex;
+    border: 1px solid #e4e4e4;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.post-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.post-content {
+    flex-grow: 1;
+}
+
+.post-author {
+    font-weight: bold;
+    text-decoration: none;
+    color: #3366cc;
+}

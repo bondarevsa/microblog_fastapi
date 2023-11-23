@@ -1,21 +1,48 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <table>
-        <tr valign="top">
-            <td><img src="data:image/jpeg;base64,{{ avatar }}" alt="User Avatar"></td>
-            <td>
-                <h1>Пользователь: {{ user.username }}</h1>
-                {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
-                {% if user.last_seen %}<p>Был в сети: {{ user.last_seen }}</p>{% endif %}
-                {% if user.username == current_user.username %}
-                <p><a href="/edit_profile">Редактировать профиль</a></p>
-                {% endif %}
-            </td>
-        </tr>
-    </table>
-    <hr>
-    {% for post in posts %}
-        {% include '_post.html' %}
-    {% endfor %}
+    <div class="profile-container">
+        <table>
+            <tr valign="top">
+                <td>
+                    <img src="data:image/jpeg;base64,{{ avatar }}" alt="User Avatar" class="avatar-img">
+                </td>
+                <td class="user-info">
+                    <h1>Пользователь: {{ user.username }}</h1>
+                    {% if user.about_me %}
+                        <p>{{ user.about_me }}</p>
+                    {% endif %}
+                    {% if user.last_seen %}
+                        <p>Был в сети: {{ user.last_seen }}</p>
+                    {% endif %}
+                    {% if user.username == current_user.username %}
+                        <p><a href="/edit_profile" class="edit-profile-link">Редактировать профиль</a></p>
+                    {% elif current_user.id not in user.followers %}
+                        <form method="post" action="/follow">
+                            <input type="hidden" name="username" id="username" value="{{ user.username }}">
+                            <input type="submit" value="Подписаться" class="follow-button follow">
+                        </form>
+                    {% else %}
+                        <form method="post" action="/unfollow">
+                            <input type="hidden" name="username" id="username" value="{{ user.username }}">
+                            <input type="submit" value="Отписаться" class="follow-button unfollow">
+                        </form>
+                    {% endif %}
+
+                    <div class="button-group">
+                        <form method="get" action="/user/{{ user.username }}/followers">
+                            <input type="submit" value="Подписчики" class="followers-button">
+                        </form>
+                        <form method="get" action="/user/{{ user.username }}/following">
+                            <input type="submit" value="Подписки" class="following-button">
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <hr>
+        {% for post in posts %}
+            {% include '_post.html' %}
+        {% endfor %}
+    </div>
 {% endblock %}

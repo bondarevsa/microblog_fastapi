@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="post-form-container">
+        <form class="post-form" action="/create_post" method="post" enctype="multipart/form-data">
+            <label for="header">Название поста</label><br>
+            <input type="text" name="header" id="header" required>
+
+            <br><label for="body">Содержание поста</label><br>
+            <textarea name="body" id="body" rows="5" cols="33" required></textarea><br>
+
+            <label for="image">Загрузить обложку поста:</label><br>
+            <input type="file" id="image" name="image" accept="image/*" required>
+            <br>
+
+            <input class="submit-button" type="submit" value="Создать пост">
+        </form>
+    </div>
+{% endblock %}

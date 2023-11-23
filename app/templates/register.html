@@ -1,25 +1,28 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Регистрация</h1>
+
     {% if error %}
         {{error}}
     {% endif %}
-    <form method="post" action="/register">
-        <p>
+<div class="login-container" align="center">
+    <form method="post" action="/register"  class="login-form">
+            <h1>Регистрация</h1>
+
             <label for="email">Электронная почта</label><br>
             <input type="text" name="email" id="email" required>
-        </p>
-        <p>
+
+
             <label for="username">Имя пользователя</label><br>
             <input type="text" name="username" id="username" required>
-        </p>
-        <p>
+
+
             <label for="password">Пароль</label><br>
             <input type="password" name="password" id="password" required>
-        </p>
-        <p>
-            <input type="submit" value="Register">
-        </p>
+
+
+            <input type="submit" value="Зарегистрироваться" class="login-button">
+
     </form>
+</div>
 {% endblock %}

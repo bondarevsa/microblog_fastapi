@@ -3,7 +3,7 @@ from typing import AsyncGenerator
 
 from fastapi import Depends
 from fastapi_users.db import SQLAlchemyBaseUserTable, SQLAlchemyUserDatabase
-from sqlalchemy import Column, String, Boolean, Integer, TIMESTAMP, ForeignKey
+from sqlalchemy import Column, String, Boolean, Integer, TIMESTAMP, ForeignKey, ARRAY
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
@@ -20,13 +20,15 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     username = Column(String, nullable=False)
     about_me = Column(String)
     last_seen = Column(TIMESTAMP, default=datetime.utcnow)
+    followers = Column(ARRAY(Integer), default=[])
+    following = Column(ARRAY(Integer), default=[])
     registered_at = Column(TIMESTAMP, default=datetime.utcnow)
     hashed_password: str = Column(String(length=1024), nullable=False)
     is_active: bool = Column(Boolean, default=True, nullable=False)
     is_superuser: bool = Column(Boolean, default=False, nullable=False)
     is_verified: bool = Column(Boolean, default=False, nullable=False)
 
-    post = relationship('Post')
+    posts = relationship("Post", back_populates="author")
 
 
 class Post(Base):
@@ -34,9 +36,24 @@ class Post(Base):
 
     id = Column(Integer, primary_key=True)
     body = Column(String)
+    header = Column(String)
     timestamp = Column(TIMESTAMP, default=datetime.utcnow)
     user_id = Column(Integer, ForeignKey('user.id'))
 
+    comment = relationship('Comment')
+    author = relationship("User", back_populates="posts", lazy='joined')
+
+
+class Comment(Base):
+    __tablename__ = "comment"
+
+    id = Column(Integer, primary_key=True)
+    text = Column(String)
+    created_at = Column(TIMESTAMP, default=datetime.utcnow)
+    user_id = Column(Integer, ForeignKey("user.id"))
+    post_id = Column(Integer, ForeignKey("post.id"))
+
+    author = relationship("User", lazy='joined')
 
 engine = create_async_engine(DATABASE_URL)
 async_session_maker = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
