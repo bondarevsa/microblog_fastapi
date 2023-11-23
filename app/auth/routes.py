@@ -1,5 +1,5 @@
 from typing import Annotated
-from fastapi_users import FastAPIUsers
+from fastapi_users import FastAPIUsers, models
 
 from app import app
 from fastapi.responses import HTMLResponse, RedirectResponse
@@ -14,7 +14,6 @@ from app.auth.schemas import UserRead, UserCreate, UserUpdate
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordRequestForm
 
-from fastapi_users import models
 from fastapi_users.authentication import AuthenticationBackend, Authenticator, Strategy
 from fastapi_users.manager import BaseUserManager, UserManagerDependency
 from fastapi_users.openapi import OpenAPIResponseType
@@ -50,10 +49,10 @@ async def login_form(request: Request):
 
 
 def get_auth_router(
-    backend: AuthenticationBackend,
-    get_user_manager: UserManagerDependency[models.UP, models.ID],
-    authenticator: Authenticator,
-    requires_verification: bool = False,
+        backend: AuthenticationBackend,
+        get_user_manager: UserManagerDependency[models.UP, models.ID],
+        authenticator: Authenticator,
+        requires_verification: bool = False,
 ) -> APIRouter:
     """Generate a router with login/logout routes for an authentication backend."""
     router = APIRouter()
@@ -88,10 +87,10 @@ def get_auth_router(
         responses=login_responses,
     )
     async def login(
-        request: Request,
-        credentials: OAuth2PasswordRequestForm = Depends(),
-        user_manager: BaseUserManager[models.UP, models.ID] = Depends(get_user_manager),
-        strategy: Strategy[models.UP, models.ID] = Depends(backend.get_strategy),
+            request: Request,
+            credentials: OAuth2PasswordRequestForm = Depends(),
+            user_manager: BaseUserManager[models.UP, models.ID] = Depends(get_user_manager),
+            strategy: Strategy[models.UP, models.ID] = Depends(backend.get_strategy),
     ):
         user = await user_manager.authenticate(credentials)
         if user is None or not user.is_active:

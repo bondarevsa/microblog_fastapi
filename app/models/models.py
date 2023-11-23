@@ -1,8 +1,5 @@
 from datetime import datetime
-from app.auth.database import Base
-from sqlalchemy.orm import relationship
-from app.auth.database import User
-from sqlalchemy import MetaData, Integer, String, TIMESTAMP, Column, Table, Boolean, DateTime, ForeignKey, ARRAY
+from sqlalchemy import MetaData, Integer, String, TIMESTAMP, Column, Table, Boolean, ForeignKey, ARRAY
 
 metadata = MetaData()
 
